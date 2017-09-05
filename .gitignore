@@ -1,0 +1,10 @@
+build/
+*-build/
+build-*/
+
+*.a
+*.ar
+*.so
+*.o
+*.out
+

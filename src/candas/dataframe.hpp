@@ -4,6 +4,7 @@
 #include <utility>
 #include <tuple>
 
+#include "candas/detail/emplacer.hpp"
 #include "candas/detail/repeater.hpp"
 
 
@@ -27,6 +28,7 @@ class dataframe<Columns, DType, false> {
     public:
         using dtype = DType;
         using dframe_backend = typename detail::repeater<Columns, std::vector<dtype>, std::tuple>::type;
+        using row_tuple = typename detail::repeater<Columns, double, std::tuple>::type;
         // -----
         static constexpr std::size_t columns = Columns;
         static constexpr bool is_view = false;
@@ -40,8 +42,12 @@ class dataframe<Columns, DType, false> {
         const dframe_backend & dframe() const {
             return this->_dataframe;
         }
-        void push_row() {
-            
+        // -----
+        std::size_t rows() const {
+            return std::get<0>(this->_dataframe).size();
+        }
+        void push_row(const row_tuple & values) {
+            detail::emplacer<Columns, dframe_backend, const row_tuple >(this->_dataframe, values);
         }
 
 };

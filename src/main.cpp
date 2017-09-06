@@ -9,9 +9,12 @@ int main(int argc, char * argv[]) {
 
     candas::dataframe<2> df;
 
-    df.push_row(std::make_tuple(1., 2.));
-    df.push_row(std::make_tuple(10., 20.));
-    df.push_row(std::make_tuple(100., 200.));
+    df.append_row(std::make_tuple(1., 2.));
+    df.append_row(std::make_tuple(10., 20.));
+    df.append_row(std::make_tuple(100., 200.));
+
+    auto t4 = std::make_tuple(1000., 2000.);
+    df.append_row(t4);
 
     auto & [ v1, v2 ] = df.dframe();
 

@@ -11,7 +11,7 @@ template <
         std::size_t ... Idx
     >
 void emplacer_detail(
-    DFrame & df, ArgTuple & args,
+    DFrame && df, ArgTuple && args,
     std::index_sequence<Idx...>
 ) {
     auto ui = {
@@ -25,8 +25,12 @@ template <
         typename DFrame,
         typename ArgTuple
     >
-void emplacer(DFrame & df, ArgTuple & args) {
-    emplacer_detail(df, args, std::make_index_sequence<Columns>{} );
+void emplacer(DFrame && df, ArgTuple && args) {
+    emplacer_detail(
+            std::forward<DFrame>(df),
+            std::forward<ArgTuple>(args),
+            std::make_index_sequence<Columns>{}
+        );
 }
 
 }

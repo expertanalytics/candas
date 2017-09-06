@@ -46,8 +46,17 @@ class dataframe<Columns, DType, false> {
         std::size_t rows() const {
             return std::get<0>(this->_dataframe).size();
         }
-        void push_row(const row_tuple & values) {
-            detail::emplacer<Columns, dframe_backend, const row_tuple >(this->_dataframe, values);
+        void append_row(row_tuple && values) {
+            detail::emplacer<Columns, dframe_backend, row_tuple >(
+                    std::forward<dframe_backend>(this->_dataframe),
+                    std::forward<row_tuple>(values)
+                );
+        }
+        void append_row(const row_tuple & values) {
+            detail::emplacer<Columns, dframe_backend, const row_tuple >(
+                    std::forward<dframe_backend>(this->_dataframe),
+                    std::forward<const row_tuple>(values)
+                );
         }
 
 };

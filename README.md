@@ -23,5 +23,4 @@ See the LICENSE.txt file at the package root.
 Contributors
 ------------
 
- * Eivind Storm Aarnæs (@eistaa)
-
+ * [Eivind Storm Aarnæs](https://github.com/eistaa)

@@ -4,7 +4,6 @@
 #include <utility>
 
 namespace candas::detail {
-
 namespace inner {
 
 // ================================================================================
@@ -32,14 +31,12 @@ template <  // definition
         typename /* SFINAE */,
         typename Type,
         typename Head,
-        typename ... Types
-    >
+        typename ... Types >
 struct pack_has;
 
 template <  // base case - false
         typename Type,
-        typename Head
-    >
+        typename Head >
 struct pack_has<
         typename std::enable_if<! std::is_same<Type, Head>::value >::type,
         Type, Head > : std::false_type { };
@@ -47,8 +44,7 @@ struct pack_has<
 template <  // base case - true
         typename Type,
         typename Head,
-        typename ... Types
-    >
+        typename ... Types >
 struct pack_has<
         typename std::enable_if<std::is_same<Type, Head>::value >::type,
         Type, Head, Types...
@@ -57,8 +53,7 @@ struct pack_has<
 template <  // recursive step
         typename Type,
         typename Head,
-        typename ... Types
-    >
+        typename ... Types >
 struct pack_has<
         typename std::enable_if<! std::is_same<Type, Head>::value >::type,
         Type, Head, Types...
@@ -67,26 +62,30 @@ struct pack_has<
 }  // inner
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-/// \brief  Get a type at a index in a parameter pack.
+/// \brief  Get a type at index from a parameter pack.
+///
+/// \tparam Idx    Index into Types.
+/// \tparam Types  Parameter pack to index into.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 template <
-        std::size_t Idx,    ///< Index into Types.
-        typename ... Types  ///< Parameter pack to index into.
-    >
+        std::size_t Idx,  
+        typename ... Types >
 struct pack_at {
     static_assert( Idx < sizeof...(Types), "index out of bounds" );
-    using type = typename inner::pack_at<Idx, void, Types... >::type;  ///< Type at index.
+    using type = typename inner::pack_at<Idx, void, Types... >::type;  ///< Type at index
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief  Check if a parameter pack has a specific type.
+///
+/// \tparam Type   Type to check for.
+/// \tparam Types  Parameter pack to check.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 template <
         typename Type,
-        typename ... Types
-    >
+        typename ... Types >
 struct pack_has {
-    static constexpr bool value = inner::pack_has<void, Type, Types... >::value;
+    static constexpr bool value = inner::pack_has<void, Type, Types... >::value; ///< Whether `Types` contain `Type`
 };
 
 }  // candas::detail

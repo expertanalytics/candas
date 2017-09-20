@@ -22,9 +22,10 @@ License
 
 This project is licensed under the terms of the MIT license.
 
-See the LICENSE.txt file at the package root.
+See the [LICENSE.txt](LICENSE.txt) file at the package root.
 
 Contributors
 ------------
 
  * [Eivind Storm Aarnæs](https://github.com/eistaa)
+ * [Ola Skavhaug](https://github.com/skavhaug)

@@ -43,7 +43,6 @@ target_link_libraries(${test_exe} candas)  # our library
 target_link_libraries(${test_exe} Catch)   # test library
 
 # add a test to run the entire set of Catch tests
-enable_testing()
 add_test(
     NAME all COMMAND ${test_exe}
     WORKING_DIRECTORY ${candas_test_BINARY_DIR}

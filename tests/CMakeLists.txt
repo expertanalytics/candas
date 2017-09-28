@@ -5,8 +5,10 @@ project(candas_test CXX)
 # all paths relative to 'cpp' in the directory containing this file
 set(test_cpp_prefix "${PROJECT_SOURCE_DIR}/cpp")
 set(sources_list
-    "main.cpp"
+    "test_info.cpp"
     "dataframe/test_construction.cpp"
+    # -----
+    "main.cpp"
     )
 
 # ================================================================================

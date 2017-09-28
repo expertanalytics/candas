@@ -1,0 +1,12 @@
+
+namespace candas::info {
+
+/* Tokens surounded by @ are replaced by CMake variables
+ */
+
+inline constexpr static unsigned int version_major = @candas_VERSION_MAJOR@;
+inline constexpr static unsigned int version_minor = @candas_VERSION_MINOR@;
+inline constexpr static unsigned int version_patch = @candas_VERSION_PATCH@;
+
+}
+

@@ -15,6 +15,14 @@ set(header_list
     "candas/detail/pack_tools.hpp"
     )
 
+# ================================================================================
+
+configure_file("${PROJECT_SOURCE_DIR}/include/candas/info.hpp.in" 
+               "${PROJECT_BINARY_DIR}/include/candas/info.hpp"
+               )
+
+# ================================================================================
+
 # compiler flags  --  mostly interresting for tests and examples
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++1z")  # common for all below
 # -----
@@ -39,7 +47,8 @@ endforeach(header)
 add_library(candas INTERFACE)
 # -----
 target_sources(candas INTERFACE ${candas_headers})
-target_include_directories(candas INTERFACE include/)
+target_include_directories(candas INTERFACE "${PROJECT_SOURCE_DIR}/include/"
+                                            "${PROJECT_BINARY_DIR}/include/" )
 
 # add tests
 enable_testing()

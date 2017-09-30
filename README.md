@@ -14,6 +14,13 @@ How to build
 
 ### Build
 
+To change the compiler used by CMake and make, define the `CXX` variable prior to running
+the cmake command. This is only of interst when building the tests as the Candas library is
+header only. E.g. do `CXX=clang++ cmake ..` to configure using the clang C++ compiler.
+
+The change the build type for the tests add `-DCMAKE_BUILD_TYPE=<...>` to the cmake command.
+The valid build types are: `Debug`, `Release`, and `RelWithDebInfo`.
+
 ``` bash
 # setup
 cd path/to/candas

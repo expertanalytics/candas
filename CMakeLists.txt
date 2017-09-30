@@ -3,7 +3,7 @@ project(candas
         VERSION "0.0.0"
         LANGUAGES CXX )
 
-set(CMAKE_MODULE_PATH "${candas_SOURCE_DIR}/cmake")
+list(INSERT CMAKE_MODULE_PATH 0 "${candas_SOURCE_DIR}/cmake")  # has priority -> first
 include(GetGitRevision)
 
 # ================================================================================
@@ -53,7 +53,6 @@ endif()
 # ================================================================================
 
 get_git_revision(${candas_SOURCE_DIR})
-string(TOLOWER "${GIT_REPO_CLEAN}" GIT_REPO_CLEAN_BOOL_STR)
 configure_file("${PROJECT_SOURCE_DIR}/include/candas/info.hpp.in" 
                "${PROJECT_BINARY_DIR}/include/candas/info.hpp"
                )

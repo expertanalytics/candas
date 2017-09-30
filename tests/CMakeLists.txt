@@ -8,7 +8,7 @@ set(sources_list
     "test_info.cpp"
     "dataframe/test_construction.cpp"
     # -----
-    "main.cpp"
+    "main.cpp"  # runner
     )
 
 # ================================================================================
@@ -27,9 +27,16 @@ if( (NOT CATCH_INCLUDE_DIR) OR (NOT EXISTS ${CATCH_INCLUDE_DIR}) )
     set(CATCH_INCLUDE_DIR ${candas_SOURCES_DIR}/lib/Catch/single_include
         CACHE PATH "Catch include directory")
 endif()
+
 # setup Catch as a target
 add_library(Catch INTERFACE)
 target_include_directories(Catch INTERFACE ${CATCH_INCLUDE_DIR} )
+
+# load module for detecting Catch tests
+list(APPEND CMAKE_MODULE_PATH "${candas_SOURCE_DIR}/lib/Catch/contrib")
+include(ParseAndAddCatchTests)
+
+# ================================================================================
 
 # construct sources with path
 set(test_sources )
@@ -43,10 +50,12 @@ add_executable(${test_exe} ${test_sources})
 # -----
 target_link_libraries(${test_exe} candas)  # our library
 target_link_libraries(${test_exe} Catch)   # test library
-
-# add a test to run the entire set of Catch tests
-add_test(
-    NAME all COMMAND ${test_exe}
-    WORKING_DIRECTORY ${candas_test_BINARY_DIR}
+# -----
+add_custom_target(check  # because CMake doesn't allow dependencies for the test target...
+    COMMAND ${CMAKE_CTEST_COMMAND}
+    DEPENDS ${test_exe}
 )
+
+# add test cases
+ParseAndAddCatchTests(${test_exe})
 

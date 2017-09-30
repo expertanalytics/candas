@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
-project(candas
-        VERSION "0.0.0"
-        LANGUAGES CXX )
+project(candas CXX)
+
+set(candas_VERSION_MAJOR 0)
+set(candas_VERSION_MINOR 0)
+set(candas_VERSION_PATCH 0)
 
 list(INSERT CMAKE_MODULE_PATH 0 "${candas_SOURCE_DIR}/cmake")  # has priority -> first
 include(GetGitRevision)
@@ -26,29 +28,6 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++1z")  # common for all below
 set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O2 -g -DDEBUG")
-
-# ================================================================================
-
-set(GIT_DIR "${candas_SOURCE_DIR}/.git")
-if((EXISTS ${GIT_DIR}) AND (EXISTS "${GIT_DIR}/HEAD"))
-    # create a data directory if needed
-    set(GIT_DATA_DIR "${candas_BINARY_DIR}/CMakeFiles/git-data")
-    if(NOT EXISTS ${GIT_DATA_DIR})
-        file(MAKE_DIRECTORY ${GIT_DATA_DIR})
-    endif()
-    # determine ref
-    set(HEAD_FILE "${GIT_DATA_DIR}/head")
-    configure_file("${GIT_DIR}/HEAD" ${HEAD_FILE} COPYONLY)
-    file(READ ${HEAD_FILE} HEAD_CONTENTS LIMIT 1024)
-    string(STRIP "${HEAD_CONTENTS}" HEAD_CONTENTS)
-    if(HEAD_CONTENTS MATCHES "ref:")
-
-    else()
-        # at a detached head
-        configure_file("${GIT_DIR}/HEAD" "${GIT_DATA_DIR}/head-ref" COPYONLY) 
-    endif()
-
-endif()
 
 # ================================================================================
 

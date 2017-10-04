@@ -1,7 +1,7 @@
 
 /* Copyright 2017 Expert Analytics AS
  *
- * This file is lisenced under the terms of the MIT lisence.
+ * This file is licensed under the terms of the MIT license.
  * See <https://github.com/expertanalytics/candas/blob/master/LICENSE.txt>
  */
 

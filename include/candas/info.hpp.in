@@ -1,0 +1,22 @@
+#pragma once
+
+/* Copyright 2017 Expert Analytics AS
+ *
+ * This file is licensed under the terms of the MIT license.
+ * See <https://github.com/expertanalytics/candas/blob/master/LICENSE.txt>
+ */
+
+namespace candas::info {
+
+/* Tokens surounded by @ are replaced by CMake variables
+ */
+
+inline static constexpr unsigned int version_major = @candas_VERSION_MAJOR@;
+inline static constexpr unsigned int version_minor = @candas_VERSION_MINOR@;
+inline static constexpr unsigned int version_patch = @candas_VERSION_PATCH@;
+
+inline static const char * const git_rev_short = "@GIT_REV_SHORT@";
+inline static const char * const git_rev_long = "@GIT_REV_LONG@";
+
+}
+

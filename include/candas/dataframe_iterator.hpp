@@ -18,6 +18,12 @@ namespace candas {
         df_iterator<df_row_data_type>& operator=(const df_iterator<df_row_data_type>& df_itr) = default;
         df_iterator<df_row_data_type>& operator=(df_row_data_type* ptr) { m_ptr = ptr; return (*this); }
         df_iterator<df_row_data_type>& operator++() { ++m_ptr; return (*this); }
+        df_iterator<df_row_data_type>& operator--() { --m_ptr; return (*this); }
+        df_iterator<df_row_data_type>  operator++(int) { auto temp(*this); ++m_ptr; return temp; }
+        df_iterator<df_row_data_type>  operator--(int) { auto temp(*this); --m_ptr; return temp; }
+        df_iterator<df_row_data_type>& operator+=(const ptrdiff_t& movement){ m_ptr += movement; return (*this); }
+        df_iterator<df_row_data_type>& operator-=(const ptrdiff_t& movement){ m_ptr -= movement; return (*this); }
+
         df_row_data_type& operator*() { return *m_ptr; }
         df_row_data_type* operator->() { return m_ptr; }
         const df_row_data_type* getConstPtr() const { return m_ptr; }

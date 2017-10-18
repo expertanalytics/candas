@@ -39,7 +39,7 @@ include(ParseAndAddCatchTests)
 # ================================================================================
 
 # construct sources with path
-set(test_sources )
+set(test_sources cpp/dataframe_iterator/test_construction.cpp)
 foreach(source IN LISTS sources_list)
     list(APPEND test_sources ${test_cpp_prefix}/${source})
 endforeach(source)

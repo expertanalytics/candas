@@ -56,11 +56,12 @@ jobs:
                 command: |
                     cmake -DSTDLIB=libstdc++ \
                           -DCMAKE_BUILD_TYPE=Release  ..
+                    make test-candas
             - run:
-                name: "Building tests ..."
+                name: "Run tests ..."
                 working_directory: build
                 command: |
-                    make test-candas
+                    tests/test-candas
 
 workflows:
     version: 2

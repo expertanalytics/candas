@@ -22,12 +22,27 @@ set(header_list
 
 # ================================================================================
 
+if((NOT STDLIB) AND (NOT STDLIB MATCHES ""))
+    set(STDLIB libstdc++)
+endif()
+
+# ----------------------------------------
+
 # compiler flags  --  mostly interresting for tests and examples
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++1z")  # common for all below
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++1z")
 # -----
 set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O2 -g -DDEBUG")
+# -----
+if($CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -stdlib=${STDLIB}")
+elseif($CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    # no special action to link againsd libstdc++ with g++
+    if(NOT ${STDLIB} MATCHES "libstdc++")
+        message(WARN "g++ is only configured to use 'libstdc++' as standard library")
+    endif()
+endif()
 
 # ================================================================================
 

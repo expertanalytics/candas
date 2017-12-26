@@ -6,6 +6,7 @@ project(candas_test CXX)
 set(test_cpp_prefix "${PROJECT_SOURCE_DIR}/cpp")
 set(sources_list
     "test_info.cpp"
+    "dataframe/test_accessors.cpp"
     "dataframe/test_construction.cpp"
     # -----
     "main.cpp"  # runner

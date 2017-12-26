@@ -104,17 +104,23 @@ class dataframe {
             return this->get_tuple_for_row_impl(i, std::index_sequence_for<DTypes...>{});
         }
         // -----
+        void append_row(const row_tuple_type & values) {
+            detail::emplacer<dframe_type, const row_tuple_type >(
+                    std::forward<dframe_type>(this->_dataframe),
+                    std::forward<const row_tuple_type>(values)
+                );
+        }
         void append_row(row_tuple_type && values) {
             detail::emplacer<dframe_type, row_tuple_type >(
                     std::forward<dframe_type>(this->_dataframe),
                     std::forward<row_tuple_type>(values)
                 );
         }
-        void append_row(const row_tuple_type & values) {
-            detail::emplacer<dframe_type, const row_tuple_type >(
-                    std::forward<dframe_type>(this->_dataframe),
-                    std::forward<const row_tuple_type>(values)
-                );
+        void append_row(const DTypes & ... values) {
+            this->append_row(std::make_tuple(values...));
+        }
+        void append_row(DTypes && ... values) {
+            this->append_row(std::make_tuple(std::forward<DTypes>(values)...));
         }
 
     private:

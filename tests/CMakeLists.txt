@@ -8,6 +8,7 @@ set(sources_list
     "test_info.cpp"
     "dataframe/test_accessors.cpp"
     "dataframe/test_construction.cpp"
+    "dataframe/test_inserters.cpp"
     # -----
     "main.cpp"  # runner
     )

@@ -2,6 +2,8 @@
 Candas
 ======
 
+[![CircleCI tests](https://circleci.com/gh/expertanalytics/candas.png?style=shield&circle-token=:circle-token)](https://circleci.com/gh/expertanalytics/candas/tree/master)
+
 WIP proof of concept for low-cost static dataframes.
 
 How to build

@@ -10,7 +10,6 @@
 #include <utility>
 #include <vector>
 
-#include "candas/detail/emplacer.hpp"
 #include "candas/detail/pack_tools.hpp"
 
 namespace candas {
@@ -62,21 +61,23 @@ class dataframe {
     static_assert(sizeof...(DTypes) > 0, "dataframe have no columns");
 
     public:
-        template < std::size_t Column >
-        struct dtype_at {
-            using type = typename detail::pack_at<Column, DTypes... >::type;
+        template < std::size_t I >
+        struct column_type_at
+        {
+            using type = typename detail::pack_at<I, DTypes... >::type;
         };
-        template < typename Type >
-        struct has_dtype {
-            static constexpr bool value = detail::pack_has<Type, DTypes... >::value;
-        };
+        template < std::size_t I >
+        using column_type_at_t = typename column_type_at<I>::type;
         // -----
         template < typename T >
-        using column_type = std::vector<T>;
-        using dframe_type = std::tuple<column_type<DTypes>... >;
-        using row_tuple_type = std::tuple<DTypes... >;
+        constexpr static bool has_column_type() {
+            return detail::pack_has<T, DTypes... >::value;
+        }
+        template < typename T >
         // -----
-        static constexpr std::size_t columns = sizeof...(DTypes);
+        using column_type = std::vector<T>;
+        using row_tuple_type = std::tuple<DTypes... >;
+        using dframe_type = std::tuple<column_type<DTypes>... >;
 
     private:
         dframe_type _dataframe;
@@ -92,10 +93,9 @@ class dataframe {
         dataframe<DTypes...> & operator=(dataframe<DTypes...> && ) = default;
 
     public:
-        const dframe_type & dframe() const {
-            return this->_dataframe;
+        constexpr static std::size_t columns() {
+            return sizeof...(DTypes);
         }
-        // -----
         std::size_t rows() const {
             return std::get<0>(this->_dataframe).size();
         }
@@ -104,31 +104,45 @@ class dataframe {
             return this->get_tuple_for_row_impl(i, std::index_sequence_for<DTypes...>{});
         }
         // -----
-        void append_row(const row_tuple_type & values) {
-            detail::emplacer<dframe_type, const row_tuple_type >(
-                    std::forward<dframe_type>(this->_dataframe),
-                    std::forward<const row_tuple_type>(values)
-                );
-        }
-        void append_row(row_tuple_type && values) {
-            detail::emplacer<dframe_type, row_tuple_type >(
-                    std::forward<dframe_type>(this->_dataframe),
-                    std::forward<row_tuple_type>(values)
-                );
-        }
         void append_row(const DTypes & ... values) {
             this->append_row(std::make_tuple(values...));
         }
         void append_row(DTypes && ... values) {
             this->append_row(std::make_tuple(std::forward<DTypes>(values)...));
         }
+        void append_row(const row_tuple_type & values) {
+            this->emplacer(
+                    std::forward<const row_tuple_type>(values),
+                    std::index_sequence_for<DTypes...>{}
+                );
+        }
+        void append_row(row_tuple_type && values) {
+            this->emplacer(
+                    std::forward<row_tuple_type>(values),
+                    std::index_sequence_for<DTypes...>{}
+                );
+        }
 
     private:
         template < std::size_t ... I >
         row_tuple_type get_tuple_for_row_impl(std::size_t i, std::index_sequence<I...>) const {
-            return row_tuple_type(
+            return row_tuple_type{
                    std::get<I>(this->_dataframe)[i]...
-            );
+            };
+        }
+        // -----
+        template < typename T,
+                   std::size_t ... I >
+        void emplacer(T && row_tuple, std::index_sequence<I...>) {
+            auto ui = {
+                // unpack Idx to get matching elements from the dataframe and the row tuple,
+                //   and use the comma-operator to get 0u as result
+                (
+                    std::get<I>(std::forward<dframe_type>(this->_dataframe))
+                        .emplace_back(std::get<I>(std::forward<T>(row_tuple))),
+                    0u
+                )...
+            };
         }
 
 };

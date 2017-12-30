@@ -16,7 +16,6 @@ include(GetGitRevision)
 set(header_list
     "candas/dataframe.hpp"
     # -----
-    "candas/detail/emplacer.hpp"
     "candas/detail/pack_tools.hpp"
     )
 

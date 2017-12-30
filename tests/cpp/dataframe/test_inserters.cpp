@@ -47,7 +47,23 @@ SCENARIO(
             }
         }
 
-        WHEN("A row is appended as a r-value tuple") {
+        WHEN("A row is appended as separate l-value arguments") {
+            int c1 = 1, c2 = 10;
+            double c3 = 1., c4 = 10.;
+
+            df.append_row(c1, c2, c3, c4);
+
+            THEN("The size of the dataframe increases") {
+                REQUIRE( df.rows() == 1 );
+
+                AND_THEN("The row can be retreived as the last record") {
+                    dataframe::row_tuple_type res = df.get_tuple_for_row(0);
+                    REQUIRE( res == std::make_tuple(c1, c2, c3, c4) );
+                }
+            }
+        }
+
+        WHEN("A row is appended as separate r-value arguments") {
             df.append_row(1, 10, 1., 10.);
 
             THEN("The size of the dataframe increases") {

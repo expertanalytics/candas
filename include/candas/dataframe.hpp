@@ -60,6 +60,10 @@ class dataframe {
 
     static_assert(sizeof...(DTypes) > 0, "dataframe have no columns");
 
+    // dataframes with different column specifications should have private access to one another
+    template < typename ... ODTs >
+    friend class dataframe;
+
     public:
         template < std::size_t I >
         struct column_type_at
@@ -73,9 +77,9 @@ class dataframe {
         constexpr static bool has_column_type() {
             return detail::pack_has<T, DTypes... >::value;
         }
-        template < typename T >
         // -----
-        using column_type = std::vector<T>;
+        template < typename T, typename ... As >
+        using column_type = std::vector<T, As...>;
         using row_tuple_type = std::tuple<DTypes... >;
         using dframe_type = std::tuple<column_type<DTypes>... >;
 
@@ -91,6 +95,12 @@ class dataframe {
         // move
         dataframe(dataframe<DTypes...> && ) = default;
         dataframe<DTypes...> & operator=(dataframe<DTypes...> && ) = default;
+
+    private:
+        constexpr explicit dataframe(const column_type<DTypes> & ... columns)
+          : _dataframe{ std::forward<const column_type<DTypes>>(columns)... } { }
+        constexpr explicit dataframe(column_type<DTypes> && ... columns)
+          : _dataframe{ std::forward<column_type<DTypes>>(columns)... } { }
 
     public:
         constexpr static std::size_t columns() {
@@ -122,6 +132,44 @@ class dataframe {
                     std::index_sequence_for<DTypes...>{}
                 );
         }
+        // -----
+        template < typename T >
+        dataframe<DTypes..., T> appended_column(
+                const column_type<T> & column
+        ) {
+            return this->appended_column_impl(
+                    std::forward<const column_type<T>>(column),
+                    std::index_sequence_for<DTypes...>{}
+                );
+        }
+        template < typename T >
+        dataframe<DTypes..., T> appended_column(
+                column_type<T> && column
+        ) {
+            return this->appended_column_impl(
+                    std::forward<column_type<T>>(column),
+                    std::index_sequence_for<DTypes...>{}
+                );
+        }
+        // -----
+        template < typename T >
+        dataframe<T, DTypes...> prepended_column(
+                const column_type<T> & column
+        ) {
+            return this->prepended_column_impl(
+                    std::forward<const column_type<T>>(column),
+                    std::index_sequence_for<DTypes...>{}
+                );
+        }
+        template < typename T >
+        dataframe<T, DTypes...> prepended_column(
+                column_type<T> && column
+        ) {
+            return this->prepended_column_impl(
+                    std::forward<column_type<T>>(column),
+                    std::index_sequence_for<DTypes...>{}
+                );
+        }
 
     private:
         template < std::size_t ... I >
@@ -142,6 +190,40 @@ class dataframe {
                         .emplace_back(std::get<I>(std::forward<T>(row_tuple))),
                     0u
                 )...
+            };
+        }
+        // -----
+        template< typename T,
+                  std::size_t ... I >
+        dataframe<DTypes..., T> appended_column_impl(const column_type<T> && column, std::index_sequence<I...>) {
+            return dataframe<DTypes..., T>{
+                std::get<I>(std::forward<dframe_type>(this->_dataframe))...,
+                std::forward<const column_type<T>>(column)
+            };
+        }
+        template< typename T,
+                  std::size_t ... I >
+        dataframe<DTypes..., T> appended_column_impl(column_type<T> && column, std::index_sequence<I...>) {
+            return dataframe<DTypes..., T>{
+                std::get<I>(std::forward<dframe_type>(this->_dataframe))...,
+                std::forward<column_type<T>>(column)
+            };
+        }
+        // -----
+        template< typename T,
+                  std::size_t ... I >
+        dataframe<T, DTypes...> prepended_column_impl(const column_type<T> && column, std::index_sequence<I...>) {
+            return dataframe<T, DTypes...>{
+                std::forward<const column_type<T>>(column),
+                std::get<I>(std::forward<dframe_type>(this->_dataframe))...
+            };
+        }
+        template< typename T,
+                  std::size_t ... I >
+        dataframe<T, DTypes...> prepended_column_impl(column_type<T> && column, std::index_sequence<I...>) {
+            return dataframe<T, DTypes...>{
+                std::forward<column_type<T>>(column),
+                std::get<I>(std::forward<dframe_type>(this->_dataframe))...
             };
         }
 

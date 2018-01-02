@@ -7,6 +7,8 @@
 
 #include "catch.hpp"
 
+#include <vector>
+
 #include "candas/dataframe.hpp"
 
 
@@ -73,6 +75,94 @@ SCENARIO(
                     dataframe::row_tuple_type res = df.get_tuple_for_row(0);
                     REQUIRE( res == std::make_tuple(1, 10, 1., 10.) );
                 }
+            }
+        }
+    }
+}
+
+
+SCENARIO(
+    "Create dataframes with appended columns",
+    "[dataframe][inserters][add-columns]"
+) {
+    GIVEN("A dataframe type and a instance of it with some rows") {
+        using dataframe = candas::dataframe<int, int, double, double>;
+
+        dataframe df{};
+        df.append_row(1, 10, 100., 1000.);
+        df.append_row(2, 20, 200., 2000.);
+        df.append_row(3, 30, 300., 3000.);
+
+        WHEN("We generate a new dataframe type with an appended column and the old data moved") {
+            std::vector<char> new_column{'a', 'b', 'c'};
+            auto df_appended = df.appended_column(new_column);
+
+            THEN("The new dataframes column count have increased") {
+                REQUIRE( df_appended.columns() == 5 );
+            }
+
+            THEN("Rows retreived from the new dataframe contains the new elements") {
+                auto row = df_appended.get_tuple_for_row(1);
+
+                REQUIRE( row == std::make_tuple(2, 20, 200., 2000., 'b') );
+            }
+        }
+
+        WHEN("We generate a new dataframe type with an appended column and the old data moved") {
+            auto df_appended = df.appended_column(std::vector<char>{'a', 'b', 'c'});
+
+            THEN("The new dataframes column count have increased") {
+                REQUIRE( df_appended.columns() == 5 );
+            }
+
+            THEN("Rows retreived from the new dataframe contains the new elements") {
+                auto row = df_appended.get_tuple_for_row(1);
+
+                REQUIRE( row == std::make_tuple(2, 20, 200., 2000., 'b') );
+            }
+        }
+    }
+}
+
+
+SCENARIO(
+    "Create dataframes with prepended columns",
+    "[dataframe][inserters][add-columns]"
+) {
+    GIVEN("A dataframe type and a instance of it with some rows") {
+        using dataframe = candas::dataframe<int, int, double, double>;
+
+        dataframe df{};
+        df.append_row(1, 10, 100., 1000.);
+        df.append_row(2, 20, 200., 2000.);
+        df.append_row(3, 30, 300., 3000.);
+
+        WHEN("We generate a new dataframe type with an prepended column and the old data moved") {
+            std::vector<char> new_column{'a', 'b', 'c'};
+            auto df_prepended = df.prepended_column(new_column);
+
+            THEN("The new dataframes column count have increased") {
+                REQUIRE( df_prepended.columns() == 5 );
+            }
+
+            THEN("Rows retreived from the new dataframe contains the new elements") {
+                auto row = df_prepended.get_tuple_for_row(1);
+
+                REQUIRE( row == std::make_tuple('b', 2, 20, 200., 2000.) );
+            }
+        }
+
+        WHEN("We generate a new dataframe type with a prepended column and the old data moved") {
+            auto df_prepended = df.prepended_column(std::vector<char>{'a', 'b', 'c'});
+
+            THEN("The new dataframes column count have increased") {
+                REQUIRE( df_prepended.columns() == 5 );
+            }
+
+            THEN("Rows retreived from the new dataframe contains the new elements") {
+                auto row = df_prepended.get_tuple_for_row(1);
+
+                REQUIRE( row == std::make_tuple('b', 2, 20, 200., 2000.) );
             }
         }
     }

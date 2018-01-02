@@ -121,13 +121,51 @@ class dataframe {
             this->append_row(std::make_tuple(std::forward<DTypes>(values)...));
         }
         void append_row(const row_tuple_type & values) {
-            this->emplacer(
+            this->emplace_back(
                     std::forward<const row_tuple_type>(values),
                     std::index_sequence_for<DTypes...>{}
                 );
         }
         void append_row(row_tuple_type && values) {
-            this->emplacer(
+            this->emplace_back(
+                    std::forward<row_tuple_type>(values),
+                    std::index_sequence_for<DTypes...>{}
+                );
+        }
+        // -----
+        void prepend_row(const DTypes & ... values) {
+            this->prepend_row(std::make_tuple(values...));
+        }
+        void prepend_row(DTypes && ... values) {
+            this->prepend_row(std::make_tuple(std::forward<DTypes>(values)...));
+        }
+        void prepend_row(const row_tuple_type & values) {
+            this->emplace_front(
+                    std::forward<const row_tuple_type>(values),
+                    std::index_sequence_for<DTypes...>{}
+                );
+        }
+        void prepend_row(row_tuple_type && values) {
+            this->emplace_front(
+                    std::forward<row_tuple_type>(values),
+                    std::index_sequence_for<DTypes...>{}
+                );
+        }
+        // -----
+        void insert_row(std::size_t i, const DTypes & ... values) {
+            this->insert_row(i, std::make_tuple(values...));
+        }
+        void insert_row(std::size_t i, DTypes && ... values) {
+            this->insert_row(i, std::make_tuple(std::forward<DTypes>(values)...));
+        }
+        void insert_row(std::size_t i, const row_tuple_type & values) {
+            this->emplace( i,
+                    std::forward<const row_tuple_type>(values),
+                    std::index_sequence_for<DTypes...>{}
+                );
+        }
+        void insert_row(std::size_t i, row_tuple_type && values) {
+            this->emplace( i,
                     std::forward<row_tuple_type>(values),
                     std::index_sequence_for<DTypes...>{}
                 );
@@ -181,13 +219,53 @@ class dataframe {
         // -----
         template < typename T,
                    std::size_t ... I >
-        void emplacer(T && row_tuple, std::index_sequence<I...>) {
-            auto ui = {
+        void emplace_front(T && row_tuple, std::index_sequence<I...>) {
+            // create a tuple with iterators to the first element of each column
+            auto it = std::make_tuple(
+                    std::get<I>(this->_dataframe).cbegin()...
+                );
+            auto emplaced = {
+                // unpack Idx to get matching elements from the dataframe, the iterator tuple,
+                //   and the row tuple. Then use the comma-operator to get 0u as result
+                (
+                    std::get<I>(this->_dataframe)
+                        .emplace(std::get<I>(it), std::get<I>(std::forward<T>(row_tuple))),
+                    0u
+                )...
+            };
+        }
+        template < typename T,
+                   std::size_t ... I >
+        void emplace_back(T && row_tuple, std::index_sequence<I...>) {
+            auto emplaced = {
                 // unpack Idx to get matching elements from the dataframe and the row tuple,
                 //   and use the comma-operator to get 0u as result
                 (
-                    std::get<I>(std::forward<dframe_type>(this->_dataframe))
+                    std::get<I>(this->_dataframe)
                         .emplace_back(std::get<I>(std::forward<T>(row_tuple))),
+                    0u
+                )...
+            };
+        }
+        template < typename T,
+                   std::size_t ... I >
+        void emplace(std::size_t i, T && row_tuple, std::index_sequence<I...>) {
+            // create a tuple with iterators to the first element of each column
+            auto it = std::make_tuple(
+                    std::get<I>(this->_dataframe).cbegin()...
+                );
+            // advance the iterators in the tuple the required amount
+            auto dist = {
+                (
+                    std::advance(std::get<I>(it), i), 0u
+                )...
+            };
+            auto emplaced = {
+                // unpack Idx to get matching elements from the dataframe, the iterator tuple,
+                //   and the row tuple. Then use the comma-operator to get 0u as result
+                (
+                    std::get<I>(this->_dataframe)
+                        .emplace(std::get<I>(it), std::get<I>(std::forward<T>(row_tuple))),
                     0u
                 )...
             };

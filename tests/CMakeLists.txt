@@ -7,6 +7,7 @@ set(test_cpp_prefix "${PROJECT_SOURCE_DIR}/cpp")
 set(sources_list
     "test_info.cpp"
     "dataframe/test_construction.cpp"
+    "dataframe_iterator/test_iterator_behavior.cpp"
     # -----
     "main.cpp"  # runner
     )
@@ -39,7 +40,7 @@ include(ParseAndAddCatchTests)
 # ================================================================================
 
 # construct sources with path
-set(test_sources cpp/dataframe_iterator/test_construction.cpp)
+set(test_sources )
 foreach(source IN LISTS sources_list)
     list(APPEND test_sources ${test_cpp_prefix}/${source})
 endforeach(source)

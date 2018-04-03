@@ -1,0 +1,73 @@
+
+version: 2
+
+jobs:
+    test-gcc:
+        docker:
+            - image: candas/test-env:gcc
+        working_directory: ~/candas
+        steps:
+            - checkout
+            - run: git submodule update --init
+            - run: mkdir build
+            - run:
+                name: "Building tests ..."
+                working_directory: build
+                command: |
+                    cmake -DSTDLIB=libstdc++ \
+                          -DCMAKE_BUILD_TYPE=Release  ..
+                    make test-candas
+            - run:
+                name: "Run tests ..."
+                working_directory: build
+                command: |
+                    tests/test-candas
+    test-clang:
+        docker:
+            - image: candas/test-env:clang
+        working_directory: ~/candas
+        steps:
+            - checkout
+            - run: git submodule update --init
+            - run: mkdir build
+            - run:
+                name: "Building tests ..."
+                working_directory: build
+                command: |
+                    cmake -DSTDLIB=libstdc++ \
+                          -DCMAKE_BUILD_TYPE=Release  ..
+                    make test-candas
+            - run:
+                name: "Run tests ..."
+                working_directory: build
+                command: |
+                    tests/test-candas
+    test-clang-libcxx:
+        docker:
+            - image: candas/test-env:clang-libcxx
+        working_directory: ~/candas
+        steps:
+            - checkout
+            - run: git submodule update --init
+            - run: mkdir build
+            - run:
+                name: "Building tests ..."
+                working_directory: build
+                command: |
+                    cmake -DSTDLIB=libstdc++ \
+                          -DCMAKE_BUILD_TYPE=Release  ..
+                    make test-candas
+            - run:
+                name: "Run tests ..."
+                working_directory: build
+                command: |
+                    tests/test-candas
+
+workflows:
+    version: 2
+    test-flow:
+        jobs:
+            - test-clang
+            - test-clang-libcxx
+            - test-gcc
+

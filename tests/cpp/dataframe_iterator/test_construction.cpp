@@ -5,20 +5,27 @@
  */
 
 #include <catch.hpp>
+
+#include "candas/dataframe.hpp"
 #include "candas/dataframe_iterator.hpp"
-#include <iostream>
+
+#include <tuple>
+
 
 SCENARIO(
     "Mock iterator works",
     "[iterator]"
 ) {
-    auto df = candas::mock_df(4);
-    std::get<0>(df.data[0]) = 0;
-    std::get<0>(df.data[1]) = 1;
-    std::get<0>(df.data[2]) = 2;
-    std::get<0>(df.data[3]) = 3;
-    CHECK(4 == df.data.size());
-    int i = 0;
+    candas::homogeneous_dataframe<double, 2> df;
+
+    df.append_row(std::make_tuple(1.0, 10.0));
+    df.append_row(std::make_tuple(2.0, 20.0));
+    df.append_row(std::make_tuple(3.0, 30.0));
+    df.append_row(std::make_tuple(4.0, 40.0));
+
+    CHECK(df.rows() == 4);
+
+    int i = 1;
     for (auto iter = df.begin(); iter != df.end(); ++iter){
         CHECK(std::get<0>(*iter) == i++);
     }

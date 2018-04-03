@@ -1,48 +1,52 @@
 #pragma once
 
+#include <iterator>
+
+
 namespace candas {
 
+template < typename DF >
+class df_iterator
+{
 
-    template <typename df_row_data_type>
-    class df_iterator: public std::iterator<std::random_access_iterator_tag, df_row_data_type,
-            ptrdiff_t, df_row_data_type*, df_row_data_type&>
-    {
-    public:
-        df_iterator(df_row_data_type* ptr = nullptr) { m_ptr = ptr; }
-        df_iterator(const df_iterator<df_row_data_type>& raw_iterator) = default;
-        ~df_iterator(){}
+public:
+    using iterator_category	= std::random_access_iterator_tag;
+    using value_type = typename DF::row_tuple_type;
+    using difference_type = std::ptrdiff_t;
+    using pointer = value_type *;
+    using reference = typename DF::row_ref_type;
 
-        bool operator==(const df_iterator<df_row_data_type>& other) const { return m_ptr == other.getConstPtr(); }
-        bool operator!=(const df_iterator<df_row_data_type>& other) const { return m_ptr != other.getConstPtr(); }
+private:
+    DF & _df;
+    difference_type _pos;
 
-        df_iterator<df_row_data_type>& operator=(const df_iterator<df_row_data_type>& df_itr) = default;
-        df_iterator<df_row_data_type>& operator=(df_row_data_type* ptr) { m_ptr = ptr; return (*this); }
-        df_iterator<df_row_data_type>& operator++() { ++m_ptr; return (*this); }
-        df_iterator<df_row_data_type>& operator--() { --m_ptr; return (*this); }
-        df_iterator<df_row_data_type>  operator++(int) { auto temp(*this); ++m_ptr; return temp; }
-        df_iterator<df_row_data_type>  operator--(int) { auto temp(*this); --m_ptr; return temp; }
-        df_iterator<df_row_data_type>& operator+=(const ptrdiff_t& movement){ m_ptr += movement; return (*this); }
-        df_iterator<df_row_data_type>& operator-=(const ptrdiff_t& movement){ m_ptr -= movement; return (*this); }
+public:
+    df_iterator(DF & df, difference_type init_pos = 0) : _df{ df }, _pos{ init_pos } {}
+    ~df_iterator() {}
+    // -----
+    df_iterator(const df_iterator & ) = default;
+    df_iterator & operator=(const df_iterator & ) = default;
+    // -----
+    df_iterator(df_iterator && ) = default;
+    df_iterator & operator=(df_iterator && ) = default;
 
-        df_row_data_type& operator*() { return *m_ptr; }
-        df_row_data_type* operator->() { return m_ptr; }
-        const df_row_data_type* getConstPtr() const { return m_ptr; }
 
-    protected:
-        df_row_data_type* m_ptr;
-    };
+    // bool operator==(const df_iterator & other) const { return m_ptr == other.getConstPtr(); }
+    bool operator!=(const df_iterator & other) const { return _pos != other._pos; }
 
-    class mock_df {
-        using df_row_data_type = std::tuple<int, int>;
-    public:
-        std::vector<df_row_data_type> data;
-    public:
-        mock_df(size_t size) : data(size) {}
-        using iterator = df_iterator<df_row_data_type>;
+    // df_iterator & operator=(const df_iterator & df_itr) = default;
+    // df_iterator & operator=(pointer ptr) { m_ptr = ptr; return (*this); }
+    df_iterator & operator++() { ++_pos; return *this; }  // ++it
+    // df_iterator & operator--() { --m_ptr; return (*this); }  // --it
+    // df_iterator   operator++(int) { auto temp(*this); ++m_ptr; return temp; }  // it++
+    // df_iterator   operator--(int) { auto temp(*this); --m_ptr; return temp; }  // it--
+    // df_iterator & operator+=(const ptrdiff_t& movement){ m_ptr += movement; return (*this); }
+    // df_iterator & operator-=(const ptrdiff_t& movement){ m_ptr -= movement; return (*this); }
 
-    public:
-        iterator begin() { return iterator(&data[0]); }
-        iterator end() { return iterator(&data[data.size()]); }
-    };
+    reference operator*() { return this->_df.get_row_reference(_pos); }
+    // value_type * operator->() { return m_ptr; }
+    // const pointer getConstPtr() const { return m_ptr; }
+};
 
 }
+

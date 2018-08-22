@@ -3,7 +3,7 @@ FROM candas/test-env:clang
 LABEL maintainer="eivind@xal.no"
 
 # build
-ADD  build-steps-libcxx.sh  /
+ADD  build-steps-libcxx.sh .
 RUN  bash build-steps-libcxx.sh $CLANG_VERSION \
  &&  rm build-steps-libcxx.sh
 

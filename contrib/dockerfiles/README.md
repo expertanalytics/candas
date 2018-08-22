@@ -24,23 +24,23 @@ Tests are run against the tags `clang`, `clang-libcxx`, and `gcc` on the dockerh
  * `cmake_version`, `llvm_version`, and `gcc_version`: These variables determine the versions to
     build.  The versions must match versions found on the respective download pages.
  * `docker_build_cmd`: Change this the your favored docker build command. The most usefull change
-    is to change the number of CPUs used for the builds. E.g.: `--cpuset-cpus 1,2,3,4` wil build
+    is to change the number of CPUs used for the builds. E.g.: `--cpuset-cpus 1,2,3,4` will build
     using four cores.
 
 ``` bash
-cmake_version=3.9.2
-llvm_version=5.0.0
-gcc_version=7.2.0
+cmake_version=3.11.4
+llvm_version=6.0.1
+gcc_version=8.1.0
 
 docker_build_cmd="docker build --cpuset-cpus 1"
 
 # build core
 $docker_build_cmd \
+        --build-arg cmake_ver=$cmake_version \
         -t candas/core:latest  core
 
 # build the clang testing environment
 $docker_build_cmd \
-        --build-arg cmake_ver=$cmake_version \
         --build-arg clang_ver=$llvm_version \
         -t candas/test-env:clang  env-clang
 
@@ -50,7 +50,6 @@ $docker_build_cmd \
 
 # build the gcc testing environment
 $docker_build_cmd \
-        --build-arg cmake_ver=$cmake_version \
         --build-arg gcc_ver=$gcc_version \
         -t candas/test-env:gcc  env-gcc
 ```

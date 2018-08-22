@@ -4,7 +4,7 @@ version: 2
 jobs:
     test-gcc:
         docker:
-            - image: candas/test-env:gcc
+            - image: candas/test-env:gcc-8.1.0
         working_directory: ~/candas
         steps:
             - checkout
@@ -24,7 +24,7 @@ jobs:
                     tests/test-candas
     test-clang:
         docker:
-            - image: candas/test-env:clang
+            - image: candas/test-env:clang-6.0.1
         working_directory: ~/candas
         steps:
             - checkout
@@ -44,7 +44,7 @@ jobs:
                     tests/test-candas
     test-clang-libcxx:
         docker:
-            - image: candas/test-env:clang-libcxx
+            - image: candas/test-env:clang-libcxx-6.0.1
         working_directory: ~/candas
         steps:
             - checkout

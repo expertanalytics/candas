@@ -15,7 +15,7 @@ set(sources_list
 # ================================================================================
 
 # locate Catch or fetch it
-find_path(CATCH_INCLUDE_DIR  "catch.hpp"
+find_path(CATCH_INCLUDE_DIR  "catch2"
           PATHS ${candas_SOURCE_DIR}/lib/Catch/single_include  NO_DEFAULT_PATH )
 if( (NOT CATCH_INCLUDE_DIR) OR (NOT EXISTS ${CATCH_INCLUDE_DIR}) )
     message("Could not find library: Catch -- fetching...")

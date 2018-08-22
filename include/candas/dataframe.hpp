@@ -12,6 +12,7 @@
 
 #include "candas/detail/emplacer.hpp"
 #include "candas/detail/pack_tools.hpp"
+#include "candas/dataframe_iterator.hpp"
 
 namespace candas {
 
@@ -73,6 +74,7 @@ class dataframe {
         // -----
         using dframe_type = std::tuple<std::vector<DTypes>... >;
         using row_tuple_type = std::tuple<DTypes... >;
+        using row_ref_type = std::tuple<std::reference_wrapper<DTypes>... >;
         // -----
         static constexpr std::size_t columns = sizeof...(DTypes);
 
@@ -88,6 +90,10 @@ class dataframe {
             return std::get<0>(this->_dataframe).size();
         }
         // -----
+        row_ref_type get_row_reference(std::size_t i) {
+            return this->get_row_reference_impl(i, std::index_sequence_for<DTypes...>{});
+        }
+        // -----
         void append_row(row_tuple_type && values) {
             detail::emplacer<dframe_type, row_tuple_type >(
                     std::forward<dframe_type>(this->_dataframe),
@@ -99,6 +105,31 @@ class dataframe {
                     std::forward<dframe_type>(this->_dataframe),
                     std::forward<const row_tuple_type>(values)
                 );
+        }
+
+    public:
+        auto begin() noexcept {
+            return df_iterator<dataframe<DTypes...>>(*this, 0);
+        }
+        auto end() noexcept {
+            return df_iterator<dataframe<DTypes...>>(*this, this->rows());
+        }
+        // -----
+        const auto cbegin() const noexcept {
+            return df_iterator<const dataframe<DTypes...>>(*this, 0);
+        }
+        const auto cend() const noexcept {
+            return df_iterator<const dataframe<DTypes...>>(*this, this->rows());
+        }
+
+    private:
+        template < std::size_t ... I >
+        row_ref_type get_row_reference_impl(std::size_t i, std::index_sequence<I...>) {
+            return row_ref_type{
+                std::reference_wrapper<DTypes>{
+                    std::get<I>(this->_dataframe)[i]
+                }...
+            };
         }
 
 };

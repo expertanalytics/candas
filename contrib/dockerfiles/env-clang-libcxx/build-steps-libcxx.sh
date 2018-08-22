@@ -35,20 +35,11 @@ build_steps () {
 
     # download and check sources
     echo_run  mkdir -p $DOWN_DIR && cd $DOWN_DIR
-    echo_run  gpg --batch --keyserver pgp.key-server.io --recv-key B6C8F98282B944E3B0D5C2530FC3042E345AD05D
-    echo_run  gpg --batch --keyserver pgp.key-server.io --recv-key 11E521D646982372EB577A1F8F0871F202119294
-    echo_run  curl  -O https://releases.llvm.org/$LIBCXX_VERSION/llvm-$LIBCXX_VERSION.src.tar.xz \
-                    -O https://releases.llvm.org/$LIBCXX_VERSION/llvm-$LIBCXX_VERSION.src.tar.xz.sig \
-                    -O https://releases.llvm.org/$LIBCXX_VERSION/libcxx-$LIBCXX_VERSION.src.tar.xz \
-                    -O https://releases.llvm.org/$LIBCXX_VERSION/libcxx-$LIBCXX_VERSION.src.tar.xz.sig \
-                    -O https://releases.llvm.org/$LIBCXX_VERSION/libcxxabi-$LIBCXX_VERSION.src.tar.xz \
-                    -O https://releases.llvm.org/$LIBCXX_VERSION/libcxxabi-$LIBCXX_VERSION.src.tar.xz.sig \
-                    -O https://releases.llvm.org/$LIBCXX_VERSION/libunwind-$LIBCXX_VERSION.src.tar.xz \
-                    -O https://releases.llvm.org/$LIBCXX_VERSION/libunwind-$LIBCXX_VERSION.src.tar.xz.sig
-    echo_run  gpg --no-options --verify llvm-$LIBCXX_VERSION.src.tar.xz.sig       llvm-$LIBCXX_VERSION.src.tar.xz
-    echo_run  gpg --no-options --verify libcxx-$LIBCXX_VERSION.src.tar.xz.sig     libcxx-$LIBCXX_VERSION.src.tar.xz
-    echo_run  gpg --no-options --verify libcxxabi-$LIBCXX_VERSION.src.tar.xz.sig  libcxxabi-$LIBCXX_VERSION.src.tar.xz
-    echo_run  gpg --no-options --verify libunwind-$LIBCXX_VERSION.src.tar.xz.sig  libunwind-$LIBCXX_VERSION.src.tar.xz
+    echo_run  curl \
+                -O https://releases.llvm.org/$LIBCXX_VERSION/llvm-$LIBCXX_VERSION.src.tar.xz \
+                -O https://releases.llvm.org/$LIBCXX_VERSION/libcxx-$LIBCXX_VERSION.src.tar.xz \
+                -O https://releases.llvm.org/$LIBCXX_VERSION/libcxxabi-$LIBCXX_VERSION.src.tar.xz \
+                -O https://releases.llvm.org/$LIBCXX_VERSION/libunwind-$LIBCXX_VERSION.src.tar.xz
 
     # setup sources
     echo_run  tar --xz -xf llvm-$LIBCXX_VERSION.src.tar.xz
@@ -73,10 +64,7 @@ build_steps () {
 
     # cleanup
     echo_run  rm -rf $LLVM_SRC_HOME $LLVM_BUILD $DOWN_DIR
-    echo_run  apt-get --yes purge cmake
     echo_run  apt-get --yes clean
-    echo_run  gpg --batch --delete-keys B6C8F98282B944E3B0D5C2530FC3042E345AD05D \
-                                        11E521D646982372EB577A1F8F0871F202119294
 
 }
 build_steps

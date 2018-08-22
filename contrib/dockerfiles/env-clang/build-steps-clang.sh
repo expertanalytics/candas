@@ -35,20 +35,11 @@ build_steps () {
 
     # download and check sources
     echo_run  mkdir -p $DOWN_DIR && cd $DOWN_DIR
-    echo_run  gpg --batch --keyserver pgp.key-server.io --recv-key B6C8F98282B944E3B0D5C2530FC3042E345AD05D
-    echo_run  gpg --batch --keyserver pgp.key-server.io --recv-key 11E521D646982372EB577A1F8F0871F202119294
-    echo_run  curl -O https://releases.llvm.org/$CLANG_VERSION/llvm-$CLANG_VERSION.src.tar.xz \
-                -O https://releases.llvm.org/$CLANG_VERSION/llvm-$CLANG_VERSION.src.tar.xz.sig \
-                -O https://releases.llvm.org/$CLANG_VERSION/cfe-$CLANG_VERSION.src.tar.xz \
-                -O https://releases.llvm.org/$CLANG_VERSION/cfe-$CLANG_VERSION.src.tar.xz.sig \
-                -O https://releases.llvm.org/$CLANG_VERSION/clang-tools-extra-$CLANG_VERSION.src.tar.xz \
-                -O https://releases.llvm.org/$CLANG_VERSION/clang-tools-extra-$CLANG_VERSION.src.tar.xz.sig \
-                -O https://releases.llvm.org/$CLANG_VERSION/compiler-rt-$CLANG_VERSION.src.tar.xz \
-                -O https://releases.llvm.org/$CLANG_VERSION/compiler-rt-$CLANG_VERSION.src.tar.xz.sig
-    echo_run  gpg --no-options --verify llvm-$CLANG_VERSION.src.tar.xz.sig              llvm-$CLANG_VERSION.src.tar.xz
-    echo_run  gpg --no-options --verify cfe-$CLANG_VERSION.src.tar.xz.sig               cfe-$CLANG_VERSION.src.tar.xz
-    echo_run  gpg --no-options --verify clang-tools-extra-$CLANG_VERSION.src.tar.xz.sig clang-tools-extra-$CLANG_VERSION.src.tar.xz
-    echo_run  gpg --no-options --verify compiler-rt-$CLANG_VERSION.src.tar.xz.sig       compiler-rt-$CLANG_VERSION.src.tar.xz
+    echo_run  curl \
+        -O https://releases.llvm.org/$CLANG_VERSION/llvm-$CLANG_VERSION.src.tar.xz \
+        -O https://releases.llvm.org/$CLANG_VERSION/cfe-$CLANG_VERSION.src.tar.xz \
+        -O https://releases.llvm.org/$CLANG_VERSION/clang-tools-extra-$CLANG_VERSION.src.tar.xz \
+        -O https://releases.llvm.org/$CLANG_VERSION/compiler-rt-$CLANG_VERSION.src.tar.xz
 
     # setup sources
     echo_run  tar --xz -xf llvm-$CLANG_VERSION.src.tar.xz
@@ -69,10 +60,7 @@ build_steps () {
 
     # cleanup
     echo_run  rm -rf $LLVM_SRC_HOME $LLVM_BUILD $DOWN_DIR
-    echo_run  apt-get --yes purge cmake python
     echo_run  apt-get --yes clean
-    echo_run  gpg --batch --delete-keys B6C8F98282B944E3B0D5C2530FC3042E345AD05D \
-                                        11E521D646982372EB577A1F8F0871F202119294
 
 }
 build_steps

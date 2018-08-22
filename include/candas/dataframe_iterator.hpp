@@ -21,31 +21,98 @@ private:
     difference_type _pos;
 
 public:
-    df_iterator(DF & df, difference_type init_pos = 0) : _df{ df }, _pos{ init_pos } {}
-    ~df_iterator() {}
-    // -----
+    df_iterator(DF & df, difference_type init_pos = 0) :
+        _df{ df }, 
+        _pos{ init_pos }
+    { }
+
+    ~df_iterator() { }
+
     df_iterator(const df_iterator & ) = default;
-    df_iterator & operator=(const df_iterator & ) = default;
-    // -----
+    df_iterator & operator= (const df_iterator & ) = default;
+
     df_iterator(df_iterator && ) = default;
     df_iterator & operator=(df_iterator && ) = default;
 
-    // bool operator==(const df_iterator & other) const { return m_ptr == other.getConstPtr(); }
-    bool operator!=(const df_iterator & other) const { return _pos != other._pos; }
+    bool operator== (const df_iterator & other) const
+    {
+        /* compare equal operator */
+        return _df == other.getConstPtr();
+    }
 
-    df_iterator & operator++() { ++_pos; return *this; }  // ++it
-    df_iterator   operator++(int) { auto temp{ *this }; ++_pos; return temp; }  // it++
-    // -----
-    // df_iterator & operator--() { --m_ptr; return (*this); }  // --it
-    // df_iterator   operator--(int) { auto temp(*this); --m_ptr; return temp; }  // it--
-    // -----
-    // df_iterator & operator+=(const ptrdiff_t& movement){ m_ptr += movement; return (*this); }
-    // df_iterator & operator-=(const ptrdiff_t& movement){ m_ptr -= movement; return (*this); }
+    bool operator!= (const df_iterator & other) const
+    {
+        /* compare not equal operator */
+        return _pos != other._pos;
+    }
 
-    reference operator*() { return this->_df.get_row_reference(_pos); }
-    // value_type * operator->() { return m_ptr; }
-    // const pointer getConstPtr() const { return m_ptr; }
+    df_iterator & operator++ ()
+    {
+        /* increment operator */
+        ++_pos;
+
+        return *this;
+    }
+
+    df_iterator operator++ (int)
+    {
+        /* increment operator */
+        auto temp{ *this };
+        ++_pos; 
+
+        return temp;
+    }
+
+    df_iterator & operator-- ()
+    {
+        /* decrement operator */
+        --_pos;
+
+        return (*this);
+    }
+
+    df_iterator operator-- (int)
+    {
+        /* decrement operator */
+        auto temp(*this);
+        --_pos; 
+        
+        return temp;
+    }
+    
+    df_iterator & operator+= (const ptrdiff_t & movement)
+    {
+        /* move operator(increment movement times) */
+        _pos += movement; 
+        
+        return (*this);
+    }
+
+    df_iterator & operator-= (const ptrdiff_t & movement)
+    {
+        /* move operator(decrement movement times) */
+        _pos -= movement;
+
+        return (*this);
+    }
+
+    reference operator* ()
+    {
+        /* get reference operator to dataframe*/
+        return this->_df.get_row_reference(_pos);
+    }
+
+    value_type * operator-> ()
+    {
+        /* return pointer to dataframe */
+        return _df;
+    }
+    
+    const pointer getConstPtr() const
+    {
+        /* return const pointer to dataframe*/
+        return _df;
+    }
 };
 
 }
-

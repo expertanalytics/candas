@@ -54,15 +54,6 @@ public:
         return *this;
     }
 
-    df_iterator operator++ (int)
-    {
-        /* increment operator */
-        auto temp{ *this };
-        ++_pos; 
-
-        return temp;
-    }
-
     df_iterator & operator-- ()
     {
         /* decrement operator */
@@ -70,20 +61,11 @@ public:
 
         return (*this);
     }
-
-    df_iterator operator-- (int)
-    {
-        /* decrement operator */
-        auto temp(*this);
-        --_pos; 
-        
-        return temp;
-    }
     
     df_iterator & operator+= (const ptrdiff_t & movement)
     {
         /* move operator(increment movement times) */
-        _pos += movement; 
+        _pos += movement;
         
         return (*this);
     }

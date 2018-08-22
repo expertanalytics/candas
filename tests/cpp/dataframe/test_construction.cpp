@@ -5,7 +5,7 @@
  * See <https://github.com/expertanalytics/candas/blob/master/LICENSE.txt>
  */
 
-#include "catch.hpp"
+#include "catch2/catch.hpp"
 
 #include "candas/dataframe.hpp"
 

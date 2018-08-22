@@ -7,6 +7,7 @@ set(test_cpp_prefix "${PROJECT_SOURCE_DIR}/cpp")
 set(sources_list
     "test_info.cpp"
     "dataframe/test_construction.cpp"
+    "dataframe_iterator/test_iterator_behavior.cpp"
     # -----
     "main.cpp"  # runner
     )

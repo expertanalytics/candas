@@ -1,3 +1,6 @@
 [submodule "lib/Catch"]
 	path = lib/Catch
 	url = https://github.com/catchorg/Catch2.git
+[submodule "lib/debug_assert"]
+	path = lib/debug_assert
+	url = https://github.com/foonathan/debug_assert

@@ -53,6 +53,27 @@ configure_file("${PROJECT_SOURCE_DIR}/include/candas/info.hpp.in"
 
 # ================================================================================
 
+# locate debug_assert or fetch it
+find_path(DEBUG_ASSERT_INCLUDE_DIR  "debug_assert.hpp"
+          PATHS ${candas_SOURCE_DIR}/lib/debug_assert NO_DEFAULT_PATH )
+      if( (NOT DEBUG_ASSERT_INCLUDE_DIR) OR (NOT EXISTS ${DEBUG_ASSERT_INCLUDE_DIR}) )
+    message("Could not find library: debug_assert -- fetching...")
+    # -----
+    execute_process(
+        COMMAND git submodule update --init
+        WORKING_DIRECTORY ${candas_SOURCE_DIR}
+    )
+    # -----
+    set(DEBUG_ASSERT_INCLUDE_DIR ${candas_SOURCES_DIR}/lib/debug_assert
+        CACHE PATH "debug_assert include directory")
+endif()
+
+# setup debug_assert as a target
+add_library(debug_assert INTERFACE)
+target_include_directories(debug_assert INTERFACE ${DEBUG_ASSERT_INCLUDE_DIR} )
+
+# ================================================================================
+
 # default to building in release mode
 if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
@@ -70,8 +91,8 @@ add_library(candas INTERFACE)
 target_sources(candas INTERFACE ${candas_headers})
 target_include_directories(candas INTERFACE "${PROJECT_SOURCE_DIR}/include/"
                                             "${PROJECT_BINARY_DIR}/include/" )
+target_link_libraries(${test_exe} debug_assert)   # debug_assert library
 
 # add tests
 enable_testing()
 add_subdirectory(tests EXCLUDE_FROM_ALL)  # test sources
-
